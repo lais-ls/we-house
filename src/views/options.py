@@ -38,7 +38,7 @@ def _option_card(icon, icon_bg, icon_color, title, subtitle, on_click) -> ft.Con
 
 
 def options_view(page: ft.Page, nome: str = "Bia") -> ft.View:
-    # TODO: pegar o nome do usuário logado quando tiver banco de dados
+    # TODO: Fetch logged-in user's name from database
 
     async def criar(e):
         await page.push_route("/criar-casa")

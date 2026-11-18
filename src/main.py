@@ -6,17 +6,12 @@ from views.join_house import join_house_view
 from views.login import login_view
 from views.options import options_view
 
-# rota -> função que monta a tela
 ROUTES = {
     "/": login_view,
     "/opcoes": options_view,
     "/criar-casa": create_house_view,
     "/entrar-casa": join_house_view,
-    # Adicione as próximas telas aqui:
-    # "/inicio": home_view,
-}
 
-# De qual tela cada rota "volta" (o que fica embaixo na pilha). Sem pai = tela raiz.
 PARENT = {
     "/criar-casa": "/opcoes",
     "/entrar-casa": "/opcoes",
@@ -28,7 +23,6 @@ def main(page: ft.Page):
     page.bgcolor = theme.BG
     page.padding = 0
 
-    # Tamanho de celular só para visualizar no computador
     page.window.width = 390
     page.window.height = 844
 
@@ -43,7 +37,6 @@ def main(page: ft.Page):
         page.update()
 
     async def view_pop(e: ft.ViewPopEvent):
-        # botão "voltar" do Android / gesto de voltar
         pai = PARENT.get(page.route)
         await page.push_route(pai or "/")
 

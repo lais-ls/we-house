@@ -7,14 +7,14 @@ TAMANHO_CODIGO = 4
 
 
 def join_house_view(page: ft.Page) -> ft.View:
-    clipboard = ft.Clipboard()  # serviço para o botão "Colar código"
+    clipboard = ft.Clipboard()
 
     def nova_caixa() -> ft.TextField:
         return ft.TextField(
             width=52,
             height=56,
             max_length=1,
-            counter=ft.Text(""),  # esconde o contador "0/1"
+            counter=ft.Text(""),
             text_align=ft.TextAlign.CENTER,
             text_size=20,
             capitalization=ft.TextCapitalization.CHARACTERS,
@@ -56,7 +56,7 @@ def join_house_view(page: ft.Page) -> ft.View:
         if len(codigo()) < TAMANHO_CODIGO:
             show_message(page, f"Digite os {TAMANHO_CODIGO} caracteres do código")
             return
-        # TODO: validar o código no banco e entrar na casa
+        # TODO: Validate house code in database and join house
         show_message(page, f"Código {codigo()} recebido! (validar no banco depois)")
 
     conteudo = ft.Column(

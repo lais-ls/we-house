@@ -1,4 +1,4 @@
-"""Componentes reutilizáveis entre as telas."""
+"""Reusable UI components shared across screens."""
 
 import flet as ft
 
