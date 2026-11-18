@@ -1,0 +1,30 @@
+# Ambiente virtual
+.venv*/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Segredos e configurações locais (NUNCA suba isso)
+.env
+*.key
+
+# Builds do Flet
+build/
+dist/
+.flet/
+
+# Banco de dados local
+*.db
+*.sqlite3
+
+# Editor / sistema operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
