@@ -1,4 +1,4 @@
-"""Reusable UI components shared across screens."""
+"""Componentes reutilizáveis entre as telas."""
 
 import flet as ft
 
@@ -101,21 +101,80 @@ def card(content: ft.Control, padding: int = 20, radius: int = 20) -> ft.Contain
     )
 
 
+def brl(valor: float) -> str:
+    """85 -> 'R$ 85,00'  |  1234.5 -> 'R$ 1.234,50'"""
+    texto = f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"R$ {texto}"
+
+
+def avatar(inicial: str, cor: str, size: int = 28) -> ft.Container:
+    return ft.Container(
+        width=size,
+        height=size,
+        border_radius=size / 2,
+        bgcolor=cor,
+        alignment=ft.Alignment.CENTER,
+        content=ft.Text(inicial, size=size * 0.42, weight=ft.FontWeight.W_700, color=theme.TEXT),
+    )
+
+
+def section_title(titulo: str, acao: str | None = None, on_click=None) -> ft.Row:
+    itens = [ft.Text(titulo, size=14, weight=ft.FontWeight.W_700, color=theme.TEXT)]
+    if acao:
+        itens.append(
+            ft.TextButton(content=ft.Text(acao, size=11, color=theme.PRIMARY), on_click=on_click)
+        )
+    return ft.Row(itens, alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+
+
+def small_button(text: str, on_click=None) -> ft.Button:
+    """Botão pequeno (ex.: 'Pagar')."""
+    return ft.Button(
+        content=ft.Text(text, size=11, weight=ft.FontWeight.W_600, color=ft.Colors.WHITE),
+        bgcolor=theme.PRIMARY,
+        height=30,
+        on_click=on_click,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=8),
+            padding=ft.Padding.symmetric(horizontal=14),
+            elevation=0,
+        ),
+    )
+
+
+def outline_button(text: str, icon=None, on_click=None) -> ft.Row:
+    return ft.Row(
+        [
+            ft.OutlinedButton(
+                content=ft.Text(text, size=13, weight=ft.FontWeight.W_600, color=theme.TEXT),
+                icon=icon,
+                icon_color=theme.TEXT,
+                height=44,
+                expand=True,
+                on_click=on_click,
+                style=ft.ButtonStyle(
+                    shape=ft.RoundedRectangleBorder(radius=12),
+                    side=ft.BorderSide(1, theme.BORDER),
+                ),
+            )
+        ]
+    )
+
+
 # ---------------------------------------------------------------------------
-# Barra inferior (para as telas internas do app, depois do login).
-# Ajuste os rótulos/ícones/rotas conforme o seu Figma.
+# Barra inferior (telas internas do app, depois de entrar numa casa).
 # ---------------------------------------------------------------------------
 NAV_ITEMS = [
     ("Início", ft.Icons.HOME_OUTLINED, ft.Icons.HOME, "/inicio"),
-    ("Tarefas", ft.Icons.CHECK_CIRCLE_OUTLINE, ft.Icons.CHECK_CIRCLE, "/tarefas"),
-    ("Despesas", ft.Icons.RECEIPT_LONG_OUTLINED, ft.Icons.RECEIPT_LONG, "/despesas"),
-    ("Perfil", ft.Icons.PERSON_OUTLINE, ft.Icons.PERSON, "/perfil"),
+    ("Contas", ft.Icons.RECEIPT_LONG_OUTLINED, ft.Icons.RECEIPT_LONG, "/contas"),
+    ("Tarefas", ft.Icons.TASK_ALT, ft.Icons.TASK_ALT, "/tarefas"),
+    ("Mais", ft.Icons.MORE_HORIZ, ft.Icons.MORE_HORIZ, "/mais"),
 ]
 
 
 def bottom_nav(page: ft.Page, selected: int = 0) -> ft.NavigationBar:
     async def on_change(e):
-        await page.push_route(NAV_ITEMS[int(e.data)][3])
+        await page.push_route(NAV_ITEMS[e.control.selected_index][3])
 
     return ft.NavigationBar(
         selected_index=selected,
