@@ -11,6 +11,7 @@ ROUTES = {
     "/opcoes": options_view,
     "/criar-casa": create_house_view,
     "/entrar-casa": join_house_view,
+}
 
 PARENT = {
     "/criar-casa": "/opcoes",

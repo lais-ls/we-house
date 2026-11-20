@@ -10,7 +10,7 @@ def login_view(page: ft.Page) -> ft.View:
     senha = app_field("Digite sua senha", icon=ft.Icons.LOCK_OUTLINE, password=True)
 
     async def entrar(e):
-        # TODO: Replace with real database authentication
+        # TODO: trocar por autenticação real (banco de dados) depois
         email.error_text = None if "@" in (email.value or "") else "Informe um e-mail válido"
         senha.error_text = None if senha.value else "Informe sua senha"
         page.update()

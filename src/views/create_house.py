@@ -1,7 +1,7 @@
 import flet as ft
 
 import theme
-from components.ui import app_field, card, labeled, logo, primary_button, show_message
+from components.ui import app_field, back_header, card, labeled, primary_button, show_message
 
 
 def create_house_view(page: ft.Page) -> ft.View:
@@ -9,7 +9,7 @@ def create_house_view(page: ft.Page) -> ft.View:
     endereco = app_field("Ex.: Bela Vista, São Paulo")
     pix = app_field("Digite sua chave Pix")
 
-    estado = {"cor": 0}  # índice da cor escolhida em theme.HOUSE_COLORS
+    estado = {"cor": 0}  # índice da cor escolhida
     nome_cor = ft.Text(theme.HOUSE_COLORS[0][0], size=12, color=theme.MUTED)
     linha_cores = ft.Row(spacing=8, alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
 
@@ -49,13 +49,13 @@ def create_house_view(page: ft.Page) -> ft.View:
     async def voltar(e):
         await page.push_route("/opcoes")
 
-    def criar(e):
+    async def criar(e):
         nome.error_text = None if (nome.value or "").strip() else "Dê um nome para a casa"
         page.update()
         if nome.error_text:
             return
         # TODO: salvar no banco: nome, endereco, pix e cor
-        show_message(page, f"Casa \"{nome.value}\" criada! (salvar no banco depois)")
+        await page.push_route("/inicio")
 
     formulario = card(
         ft.Column(

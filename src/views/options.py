@@ -1,7 +1,7 @@
 import flet as ft
 
 import theme
-from components.ui import app_field, card, labeled, logo, primary_button, show_message
+from components.ui import logo
 
 
 def _option_card(icon, icon_bg, icon_color, title, subtitle, on_click) -> ft.Container:
@@ -38,7 +38,7 @@ def _option_card(icon, icon_bg, icon_color, title, subtitle, on_click) -> ft.Con
 
 
 def options_view(page: ft.Page, nome: str = "Bia") -> ft.View:
-    # TODO: Fetch logged-in user's name from database
+    # TODO: pegar o nome do usuário logado quando tiver banco de dados
 
     async def criar(e):
         await page.push_route("/criar-casa")
