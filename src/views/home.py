@@ -3,6 +3,7 @@ import flet as ft
 import theme
 from components.ui import abrir_convite, avatar, bottom_nav, brl, card, logo, section_title, show_message
 from services import dados_fake as db
+from components.notificacoes import abrir_notificacoes
 
 
 def _resumo_card(titulo, valor, subtitulo, cor_valor, bg, borda) -> ft.Container:
@@ -105,20 +106,34 @@ def home_view(page: ft.Page) -> ft.View:
     def convidar(e):
         abrir_convite(page, db.CASA.nome, db.CASA.codigo)
 
+    def atualizar_sino():
+            n = db.total_nao_lidas()
+            sino.badge = ft.Badge(label=str(n), bgcolor=theme.ACCENT, text_color=ft.Colors.WHITE) if n else None
+    
+    def abrir_sino(e):
+        fechar = page.data.get("fechar_notificacoes")
+        if fechar:  # já aberto: tocar no sino de novo fecha
+            fechar()
+        else:
+            abrir_notificacoes(page, ao_mudar=atualizar_sino)
+
     def em_breve(e):
-        show_message(page, "Em breve")
+            show_message(page, "Em breve")
 
     eu = db.EU
     devo = db.total_pendente(db.dividas_que_eu_devo())
     recebo = db.total_pendente(db.dividas_que_me_devem())
     n_devo = len([d for d in db.dividas_que_eu_devo() if not d.pago])
     n_recebo = len([d for d in db.dividas_que_me_devem() if not d.pago])
-    total_mes = sum(v.valor for v in db.VENCIMENTOS) + 15.0  # exemplo: parte da pessoa no mês
+    total_mes = sum(v.valor for v in db.VENCIMENTOS) + 15.0
+
+    sino = ft.IconButton(ft.Icons.NOTIFICATIONS_NONE, icon_size=22, icon_color=theme.TEXT, on_click=abrir_sino)
+    atualizar_sino()
 
     topo = ft.Row(
         [
             ft.Row([logo(28), ft.Text("WeHouse", size=15, weight=ft.FontWeight.W_700, color=theme.TEXT)], spacing=8),
-            ft.IconButton(ft.Icons.NOTIFICATIONS_NONE, icon_size=22, icon_color=theme.TEXT, on_click=em_breve),
+            sino,
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
     )

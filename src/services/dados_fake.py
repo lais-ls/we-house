@@ -1,6 +1,7 @@
 """Sample data for the MVP. Replace these functions with database queries later."""
 
 from datetime import date, datetime, timedelta
+from dataclasses import dataclass
 
 from models.models import (
     Casa, Combinado, Divida, Morador, Reserva, Reuniao, Tarefa, Vencimento, Votacao, ItemCompra,
@@ -239,3 +240,57 @@ def alternar_item(item_id: int, comprado: bool):
 def adicionar_item(nome: str, quantidade: str, morador_id: int):
     prox = max((i.id for i in ITENS_COMPRA), default=0) + 1
     ITENS_COMPRA.append(ItemCompra(prox, nome, quantidade, morador_id))
+
+@dataclass
+class Notificacao:
+    chave: str       # identifica a notificação (para guardar se foi lida)
+    tipo: str        # "conta" | "receber" | "voto" | "tarefa" | "reuniao"
+    titulo: str
+    detalhe: str
+    rota: str        # tela que abre ao tocar
+    lida: bool = False
+
+
+LIDAS: set[str] = set()
+
+
+def notificacoes() -> list[Notificacao]:
+    itens: list[Notificacao] = []
+    for d in dividas_que_eu_devo():
+        if not d.pago:
+            credor = morador_por_id(d.credor_id).nome
+            itens.append(Notificacao(f"conta-{d.id}", "conta", f"Pagar {credor}: {d.descricao}",
+                                     f"R$ {d.valor:.2f}".replace(".", ",") + (f" · {d.vencimento}" if d.vencimento else ""),
+                                     "/contas"))
+    for v in votacoes(True):
+        if EU.id not in v.votos:
+            d = dias_restantes(v)
+            itens.append(Notificacao(f"voto-{v.id}", "voto", f"Votação: {v.titulo}",
+                                     f"Falta seu voto · encerra em {d} dia{'s' if d != 1 else ''}", "/votacao"))
+    for t in TAREFAS:
+        if not t.feita and t.responsavel_id == EU.id and t.detalhe.lower().startswith("hoje"):
+            itens.append(Notificacao(f"tarefa-{t.id}", "tarefa", f"Sua tarefa de hoje: {t.titulo}", t.detalhe, "/tarefas"))
+    if EU.id not in REUNIAO.confirmados:
+        r = REUNIAO.data
+        itens.append(Notificacao("reuniao", "reuniao", "Confirme sua presença na reunião",
+                                 f"{r.day:02d}/{r.month:02d} às {r.hour}h · {REUNIAO.local}", "/reuniao"))
+    for d in dividas_que_me_devem():
+        if not d.pago:
+            devedor = morador_por_id(d.devedor_id).nome
+            itens.append(Notificacao(f"receber-{d.id}", "receber", f"{devedor} ainda te deve",
+                                     f"R$ {d.valor:.2f}".replace(".", ",") + f" · {d.descricao}", "/contas"))
+    for n in itens:
+        n.lida = n.chave in LIDAS
+    return itens
+
+
+def total_nao_lidas() -> int:
+    return sum(1 for n in notificacoes() if not n.lida)
+
+
+def marcar_lida(chave: str):
+    LIDAS.add(chave)
+
+
+def marcar_todas_lidas():
+    LIDAS.update(n.chave for n in notificacoes())
