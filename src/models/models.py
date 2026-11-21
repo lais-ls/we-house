@@ -8,7 +8,7 @@ from datetime import date, datetime
 class Morador:
     id: int
     nome: str
-    cor: str  # cor do avatar (hex)
+    cor: str
 
     @property
     def inicial(self) -> str:
@@ -47,6 +47,7 @@ class Vencimento:
 @dataclass
 class Casa:
     nome: str
+    codigo: str = ""  # código de convite (4 caracteres)
     moradores: list[Morador] = field(default_factory=list)
 
 @dataclass
@@ -58,14 +59,14 @@ class Votacao:
     criador_id: int
     encerra_em: date
     votos: dict[int, bool] = field(default_factory=dict)
-    status: str = "aberta"  # "aberta" | "aprovada" | "rejeitada"
+    status: str = "aberta" 
 
 
 @dataclass
 class Reserva:
     recurso: str
     dia: date
-    hora: int  # hora de início (slots de 2h)
+    hora: int 
     morador_id: int
 
 
@@ -73,7 +74,7 @@ class Reserva:
 class Combinado:
     texto: str
     responsavel_id: int
-    prazo: str  # texto livre: "Toda semana", "Dia 15", "Sempre"
+    prazo: str 
     feito: bool = False
 
 
@@ -82,7 +83,7 @@ class Reuniao:
     data: datetime
     local: str = "no salão"
     confirmados: set[int] = field(default_factory=set)
-    confirmada: bool = False  # True quando todo mundo confirmou
+    confirmada: bool = False
     tema: str = ""
     anotacoes: str = ""
     combinados: list[Combinado] = field(default_factory=list)

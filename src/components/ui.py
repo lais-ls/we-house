@@ -1,4 +1,4 @@
-"""Componentes reutilizáveis entre as telas."""
+"""Reusable components shared across screens."""
 
 import flet as ft
 
@@ -10,7 +10,7 @@ def show_message(page: ft.Page, text: str):
 
 
 def logo(size: int = 44) -> ft.Container:
-    """Quadradinho com gradiente + ícone de casa."""
+    """Small gradient square with a house icon."""
     return ft.Container(
         width=size,
         height=size,
@@ -26,7 +26,7 @@ def logo(size: int = 44) -> ft.Container:
 
 
 def primary_button(text: str, on_click=None) -> ft.Row:
-    """Botão azul acinzentado que ocupa a largura toda."""
+    """Full-width slate-blue button."""
     return ft.Row(
         [
             ft.Button(
@@ -45,7 +45,7 @@ def primary_button(text: str, on_click=None) -> ft.Row:
 
 
 def app_field(hint: str, icon=None, password: bool = False, **kwargs) -> ft.TextField:
-    """Campo de texto no estilo do app."""
+    """Text field styled to match the app."""
     return ft.TextField(
         hint_text=hint,
         prefix_icon=icon,
@@ -66,7 +66,7 @@ def app_field(hint: str, icon=None, password: bool = False, **kwargs) -> ft.Text
 
 
 def labeled(label: str, field: ft.Control, helper: str | None = None) -> ft.Column:
-    """Rótulo em cima do campo (e um texto de ajuda opcional embaixo)."""
+    """Label above the field (plus optional helper text below)."""
     controls = [
         ft.Text(label, size=12, weight=ft.FontWeight.W_600, color=theme.TEXT),
         field,
@@ -77,7 +77,7 @@ def labeled(label: str, field: ft.Control, helper: str | None = None) -> ft.Colu
 
 
 def back_header(title: str, on_back) -> ft.Row:
-    """Seta de voltar + título da tela."""
+    """Back arrow + screen title."""
     return ft.Row(
         [
             ft.IconButton(ft.Icons.ARROW_BACK, icon_size=20, icon_color=theme.TEXT, on_click=on_back),
@@ -128,7 +128,7 @@ def section_title(titulo: str, acao: str | None = None, on_click=None) -> ft.Row
 
 
 def small_button(text: str, on_click=None) -> ft.Button:
-    """Botão pequeno (ex.: 'Pagar')."""
+    """Small button (e.g. 'Pagar')."""
     return ft.Button(
         content=ft.Text(text, size=11, weight=ft.FontWeight.W_600, color=ft.Colors.WHITE),
         bgcolor=theme.PRIMARY,
@@ -161,8 +161,61 @@ def outline_button(text: str, icon=None, on_click=None) -> ft.Row:
     )
 
 
+def abrir_convite(page: ft.Page, nome_casa: str, codigo: str):
+    """Dialog with the house invite code + a button to copy a ready-made message."""
+    clipboard = ft.Clipboard()
+
+    async def copiar(e):
+        await clipboard.set(f"Entre na {nome_casa} no WeHouse! Use o código de convite: {codigo}")
+        show_message(page, "Convite copiado! Cole no WhatsApp 😊")
+
+    def fechar(e):
+        page.pop_dialog()
+
+    caixas = ft.Row(
+        [
+            ft.Container(
+                width=52, height=60, border_radius=12, bgcolor=theme.FIELD_BG,
+                border=ft.Border.all(1, theme.BORDER), alignment=ft.Alignment.CENTER,
+                content=ft.Text(c, size=24, weight=ft.FontWeight.W_700, color=theme.TEXT),
+            )
+            for c in codigo
+        ],
+        alignment=ft.MainAxisAlignment.CENTER, spacing=10,
+    )
+    page.show_dialog(
+        ft.AlertDialog(
+            bgcolor=theme.SURFACE,
+            title=ft.Text("Convidar para a casa", size=16, weight=ft.FontWeight.W_700, color=theme.TEXT),
+            content=ft.Column(
+                [
+                    ft.Text(
+                        f"Passe este código para seus colegas. Eles escolhem “Entrar em uma casa” no WeHouse "
+                        f"e entram na {nome_casa}.",
+                        size=12, color=theme.MUTED,
+                    ),
+                    ft.Container(height=4),
+                    caixas,
+                    ft.Container(height=4),
+                    ft.Button(
+                        content=ft.Row(
+                            [ft.Icon(ft.Icons.CONTENT_COPY, size=16, color=ft.Colors.WHITE),
+                             ft.Text("Copiar convite", size=13, weight=ft.FontWeight.W_600, color=ft.Colors.WHITE)],
+                            alignment=ft.MainAxisAlignment.CENTER, spacing=8,
+                        ),
+                        bgcolor=theme.PRIMARY, height=44, on_click=copiar,
+                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=12), elevation=0),
+                    ),
+                ],
+                tight=True, spacing=8, width=320,
+            ),
+            actions=[ft.TextButton(content=ft.Text("Fechar", color=theme.MUTED), on_click=fechar)],
+        )
+    )
+
+
 def screen_header(titulo: str, subtitulo: str, on_back) -> ft.Row:
-    """Cabeçalho das telas novas: botão redondo de voltar + título + nome da casa."""
+    """Header for the newer screens: round back button + title + house name."""
     return ft.Row(
         [
             ft.IconButton(
@@ -187,7 +240,7 @@ def screen_header(titulo: str, subtitulo: str, on_back) -> ft.Row:
 
 
 def segmented(opcoes: list[tuple[str, str]], ativa: str, on_select) -> ft.Container:
-    """Controle segmentado (ex.: Abertas | Encerradas). `on_select(chave)` é chamado ao tocar."""
+    """Segmented control (e.g. Abertas | Encerradas). `on_select(key)` is called on tap."""
     return ft.Container(
         bgcolor="#EDE9DF",
         padding=3,
@@ -214,7 +267,7 @@ def segmented(opcoes: list[tuple[str, str]], ativa: str, on_select) -> ft.Contai
 
 
 def pill(texto: str, cor_texto: str, cor_fundo: str, size: int = 10) -> ft.Container:
-    """Etiqueta arredondada (ex.: 'Proposta', 'Confirmado', 'Pendente')."""
+    """Rounded label (e.g. 'Proposta', 'Confirmado', 'Pendente')."""
     return ft.Container(
         content=ft.Text(texto, size=size, weight=ft.FontWeight.W_600, color=cor_texto),
         bgcolor=cor_fundo,
@@ -223,9 +276,6 @@ def pill(texto: str, cor_texto: str, cor_fundo: str, size: int = 10) -> ft.Conta
     )
 
 
-# ---------------------------------------------------------------------------
-# Barra inferior (telas internas do app, depois de entrar numa casa).
-# ---------------------------------------------------------------------------
 NAV_ITEMS = [
     ("Início", ft.Icons.HOME_OUTLINED, ft.Icons.HOME, "/inicio"),
     ("Contas", ft.Icons.RECEIPT_LONG_OUTLINED, ft.Icons.RECEIPT_LONG, "/contas"),

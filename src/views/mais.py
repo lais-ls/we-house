@@ -1,7 +1,7 @@
 import flet as ft
 
 import theme
-from components.ui import bottom_nav, logo
+from components.ui import abrir_convite, bottom_nav, logo
 from services import dados_fake as db
 
 
@@ -38,6 +38,9 @@ def mais_view(page: ft.Page) -> ft.View:
             await page.push_route(rota)
         return handler
 
+    def convidar(e):
+        abrir_convite(page, db.CASA.nome, db.CASA.codigo)
+
     async def sair(e):
         await page.push_route("/")
 
@@ -52,6 +55,8 @@ def mais_view(page: ft.Page) -> ft.View:
                   f"{n_votos} aguardando seu voto" if n_votos else "Decisões da casa", ir("/votacao")),
             _item(ft.Icons.EVENT_AVAILABLE_OUTLINED, "Reservar", "Máquina de lavar, sala e churrasqueira", ir("/reservas")),
             _item(ft.Icons.GROUPS_OUTLINED, "Reunião mensal", "Pauta, ata e combinados", ir("/reuniao")),
+            _item(ft.Icons.PERSON_ADD_ALT_1_OUTLINED, "Convidar moradores",
+                  f"Código da casa: {db.CASA.codigo}", convidar),
             ft.Container(expand=True),
             ft.Row([ft.TextButton(content=ft.Text("Sair", size=15, weight=ft.FontWeight.W_600, color="#C9C5BA"),
                                   on_click=sair)],

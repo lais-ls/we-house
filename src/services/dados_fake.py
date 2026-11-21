@@ -11,7 +11,7 @@ LUCAS = Morador(2, "Lucas", "#C8C2EE")
 ANA = Morador(3, "Ana", "#B8D3C2")
 MARINA = Morador(4, "Marina", "#E2D08E")
 
-CASA = Casa("República Bela Vista", [EU, LUCAS, ANA, MARINA])
+CASA = Casa("República Bela Vista", "BV42", [EU, LUCAS, ANA, MARINA])  # TODO: gerar o código no banco
 
 DIVIDAS: list[Divida] = [
     # eu devo
@@ -71,7 +71,6 @@ def marcar_paga(divida_id: int):
 def get_divida(divida_id: int) -> Divida | None:
     return next((d for d in DIVIDAS if d.id == divida_id), None)
 
-
 VOTACOES: list[Votacao] = [
     Votacao(1, "Comprar geladeira nova", 2400.00, LUCAS.id, date.today() + timedelta(days=3),
             {LUCAS.id: True, ANA.id: True, MARINA.id: True}),
@@ -111,6 +110,7 @@ def adicionar_votacao(titulo: str, valor: float, dias: int):
     prox = max((v.id for v in VOTACOES), default=0) + 1
     VOTACOES.append(Votacao(prox, titulo, valor, EU.id, date.today() + timedelta(days=dias),
                             {EU.id: True}))  # quem propõe já concorda
+
 
 RECURSOS = ["Máquina de lavar", "Sala de visitas", "Churrasqueira"]
 HORARIOS = [8, 10, 12, 14, 16, 18, 20]
@@ -156,6 +156,7 @@ def cancelar_reserva(recurso: str, dia: date, hora: int, morador_id: int):
     if r and r.morador_id == morador_id:
         RESERVAS.remove(r)
 
+
 def _proximo_sabado() -> datetime:
     d = date.today() + timedelta(days=7)
     d += timedelta(days=(5 - d.weekday()) % 7)
@@ -186,7 +187,7 @@ def confirmar_presenca(morador_id: int):
 
 def propor_nova_data(nova: datetime, morador_id: int):
     REUNIAO.data = nova
-    REUNIAO.confirmados = {morador_id}
+    REUNIAO.confirmados = {morador_id} 
     REUNIAO.confirmada = False
 
 
@@ -200,6 +201,7 @@ def salvar_ata(anotacoes: str):
     REUNIAO.confirmados = set()
     REUNIAO.confirmada = False
     REUNIAO.data = REUNIAO.data + timedelta(days=28)
+
 
 def tarefas(feitas: bool) -> list[Tarefa]:
     return [t for t in TAREFAS if t.feita == feitas]

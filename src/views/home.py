@@ -1,7 +1,7 @@
 import flet as ft
 
 import theme
-from components.ui import avatar, bottom_nav, brl, card, logo, section_title, show_message
+from components.ui import abrir_convite, avatar, bottom_nav, brl, card, logo, section_title, show_message
 from services import dados_fake as db
 
 
@@ -102,6 +102,9 @@ def home_view(page: ft.Page) -> ft.View:
             await page.push_route(rota)
         return handler
 
+    def convidar(e):
+        abrir_convite(page, db.CASA.nome, db.CASA.codigo)
+
     def em_breve(e):
         show_message(page, "Em breve")
 
@@ -110,7 +113,7 @@ def home_view(page: ft.Page) -> ft.View:
     recebo = db.total_pendente(db.dividas_que_me_devem())
     n_devo = len([d for d in db.dividas_que_eu_devo() if not d.pago])
     n_recebo = len([d for d in db.dividas_que_me_devem() if not d.pago])
-    total_mes = sum(v.valor for v in db.VENCIMENTOS) + 15.0 
+    total_mes = sum(v.valor for v in db.VENCIMENTOS) + 15.0  # exemplo: parte da pessoa no mês
 
     topo = ft.Row(
         [
@@ -135,7 +138,18 @@ def home_view(page: ft.Page) -> ft.View:
                     spacing=6,
                     expand=True,
                 ),
-                ft.Icon(ft.Icons.KEYBOARD_ARROW_DOWN, color=theme.MUTED),
+                ft.Container(
+                    on_click=convidar,
+                    ink=True,
+                    padding=ft.Padding.symmetric(horizontal=10, vertical=6),
+                    border_radius=10,
+                    bgcolor=theme.INFO_BG,
+                    content=ft.Row(
+                        [ft.Icon(ft.Icons.PERSON_ADD_ALT_1_OUTLINED, size=15, color=theme.PRIMARY),
+                         ft.Text("Convidar", size=11, weight=ft.FontWeight.W_600, color=theme.PRIMARY)],
+                        spacing=4,
+                    ),
+                ),
             ],
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         ),
