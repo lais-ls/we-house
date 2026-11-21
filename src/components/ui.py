@@ -284,9 +284,88 @@ NAV_ITEMS = [
 ]
 
 
+MAIS_INDEX = 3
+
+
+def abrir_menu_mais(page: ft.Page, nav: ft.NavigationBar, selected: int):
+    """Floating menu above the "Mais" tab, with a dimmed background to focus on it."""
+    overlay_ref: list[ft.Control] = []
+
+    def fechar():
+        if overlay_ref and overlay_ref[0] in page.overlay:
+            page.overlay.remove(overlay_ref[0])
+        page.data.pop("fechar_menu_mais", None)
+        nav.selected_index = selected
+        page.update()
+
+    def fechar_click(e):
+        fechar()
+
+    def ir(rota: str):
+        async def handler(e):
+            fechar()
+            page.data["origem"] = page.route
+            await page.push_route(rota)
+        return handler
+
+    def em_breve(e):
+        fechar()
+        show_message(page, "Lista de compras em breve")
+
+    def item(icone, texto, on_click) -> ft.Container:
+        return ft.Container(
+            on_click=on_click,
+            ink=True,
+            padding=ft.Padding.symmetric(horizontal=16, vertical=10),
+            border_radius=22,
+            bgcolor=theme.SURFACE,
+            shadow=ft.BoxShadow(
+                blur_radius=16, color=ft.Colors.with_opacity(0.18, ft.Colors.BLACK), offset=ft.Offset(0, 4)
+            ),
+            content=ft.Row(
+                [ft.Icon(icone, size=18, color=theme.TEXT),
+                 ft.Text(texto, size=13, weight=ft.FontWeight.W_600, color=theme.TEXT)],
+                spacing=8, tight=True,
+            ),
+        )
+
+    menu = ft.Column(
+        [
+            item(ft.Icons.SHOPPING_BAG_OUTLINED, "Lista de Compras", em_breve),
+            item(ft.Icons.EVENT_AVAILABLE_OUTLINED, "Reservar", ir("/reservas")),
+            item(ft.Icons.HOW_TO_VOTE_OUTLINED, "Votações", ir("/votacao")),
+            item(ft.Icons.GROUPS_OUTLINED, "Reuniões", ir("/reuniao")),
+        ],
+        spacing=10,
+        horizontal_alignment=ft.CrossAxisAlignment.END,
+        tight=True,
+        right=14,
+        bottom=96,
+    )
+    overlay = ft.Stack(
+        [
+            ft.Container(expand=True, bgcolor=ft.Colors.with_opacity(0.55, ft.Colors.BLACK), on_click=fechar_click),
+            menu,
+        ],
+        expand=True,
+    )
+    overlay_ref.append(overlay)
+    page.overlay.append(overlay)
+    page.data["fechar_menu_mais"] = fechar
+    page.update()
+
+
 def bottom_nav(page: ft.Page, selected: int = 0) -> ft.NavigationBar:
     async def on_change(e):
-        await page.push_route(NAV_ITEMS[e.control.selected_index][3])
+        indice = e.control.selected_index
+        if indice == MAIS_INDEX:
+            fechar_menu = page.data.get("fechar_menu_mais")
+            if fechar_menu:
+                fechar_menu()
+            else:
+                abrir_menu_mais(page, e.control, selected)
+            return
+        await page.push_route(NAV_ITEMS[indice][3])
 
     return ft.NavigationBar(
         selected_index=selected,
