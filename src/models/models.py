@@ -1,6 +1,7 @@
 """Data models. When the database is connected, these fields become the table columns."""
 
 from dataclasses import dataclass, field
+from datetime import date, datetime
 
 
 @dataclass
@@ -47,3 +48,41 @@ class Vencimento:
 class Casa:
     nome: str
     moradores: list[Morador] = field(default_factory=list)
+
+@dataclass
+class Votacao:
+    """A proposal the house votes on. `votos` maps resident id -> True (agrees) / False (disagrees)."""
+    id: int
+    titulo: str
+    valor: float
+    criador_id: int
+    encerra_em: date
+    votos: dict[int, bool] = field(default_factory=dict)
+    status: str = "aberta"  # "aberta" | "aprovada" | "rejeitada"
+
+
+@dataclass
+class Reserva:
+    recurso: str
+    dia: date
+    hora: int  # hora de início (slots de 2h)
+    morador_id: int
+
+
+@dataclass
+class Combinado:
+    texto: str
+    responsavel_id: int
+    prazo: str  # texto livre: "Toda semana", "Dia 15", "Sempre"
+    feito: bool = False
+
+
+@dataclass
+class Reuniao:
+    data: datetime
+    local: str = "no salão"
+    confirmados: set[int] = field(default_factory=set)
+    confirmada: bool = False  # True quando todo mundo confirmou
+    tema: str = ""
+    anotacoes: str = ""
+    combinados: list[Combinado] = field(default_factory=list)

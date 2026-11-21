@@ -21,3 +21,11 @@ HOUSE_COLORS = [
     ("Amarelo", "#E2D08E"),
     ("Rosa", "#F7C2B2"),
 ]
+
+# estados (votação, reunião, reservas)
+OK_TEXT = "#5E8A73"
+OK_BG = "#E4F0E8"
+WARN_TEXT = "#E4572E"
+WARN_BG = "#FDE9E2"
+INFO_BG = "#E4E8EF"
+BUSY_BG = "#D5D7DE"     # horário ocupado

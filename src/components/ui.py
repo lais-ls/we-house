@@ -161,6 +161,68 @@ def outline_button(text: str, icon=None, on_click=None) -> ft.Row:
     )
 
 
+def screen_header(titulo: str, subtitulo: str, on_back) -> ft.Row:
+    """Cabeçalho das telas novas: botão redondo de voltar + título + nome da casa."""
+    return ft.Row(
+        [
+            ft.IconButton(
+                ft.Icons.CHEVRON_LEFT,
+                icon_size=20,
+                icon_color=theme.TEXT,
+                bgcolor=theme.SURFACE,
+                on_click=on_back,
+                style=ft.ButtonStyle(shape=ft.CircleBorder(), side=ft.BorderSide(1, theme.BORDER)),
+            ),
+            ft.Column(
+                [
+                    ft.Text(titulo, size=18, weight=ft.FontWeight.W_700, color=theme.TEXT),
+                    ft.Text(subtitulo, size=11, color=theme.MUTED),
+                ],
+                spacing=0,
+            ),
+        ],
+        spacing=8,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+
+def segmented(opcoes: list[tuple[str, str]], ativa: str, on_select) -> ft.Container:
+    """Controle segmentado (ex.: Abertas | Encerradas). `on_select(chave)` é chamado ao tocar."""
+    return ft.Container(
+        bgcolor="#EDE9DF",
+        padding=3,
+        border_radius=12,
+        content=ft.Row(
+            [
+                ft.Container(
+                    expand=True,
+                    height=36,
+                    border_radius=10,
+                    bgcolor=theme.SURFACE if chave == ativa else ft.Colors.TRANSPARENT,
+                    alignment=ft.Alignment.CENTER,
+                    on_click=lambda e, c=chave: on_select(c),
+                    content=ft.Text(
+                        texto, size=12, weight=ft.FontWeight.W_600,
+                        color=theme.TEXT if chave == ativa else theme.MUTED,
+                    ),
+                )
+                for chave, texto in opcoes
+            ],
+            spacing=0,
+        ),
+    )
+
+
+def pill(texto: str, cor_texto: str, cor_fundo: str, size: int = 10) -> ft.Container:
+    """Etiqueta arredondada (ex.: 'Proposta', 'Confirmado', 'Pendente')."""
+    return ft.Container(
+        content=ft.Text(texto, size=size, weight=ft.FontWeight.W_600, color=cor_texto),
+        bgcolor=cor_fundo,
+        padding=ft.Padding.symmetric(horizontal=8, vertical=2),
+        border_radius=8,
+    )
+
+
 # ---------------------------------------------------------------------------
 # Barra inferior (telas internas do app, depois de entrar numa casa).
 # ---------------------------------------------------------------------------

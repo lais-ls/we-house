@@ -96,6 +96,12 @@ def home_view(page: ft.Page) -> ft.View:
     async def ir_tarefas(e):
         await ir("/tarefas")
 
+    def ir_origem_home(rota):
+        async def handler(e):
+            page.data["origem"] = "/inicio"
+            await page.push_route(rota)
+        return handler
+
     def em_breve(e):
         show_message(page, "Em breve")
 
@@ -149,8 +155,8 @@ def home_view(page: ft.Page) -> ft.View:
     acoes = ft.Row(
         [
             _acao(ft.Icons.ADD_CARD_OUTLINED, "Nova conta", ir_nova_conta),
-            _acao(ft.Icons.HOW_TO_VOTE_OUTLINED, "Votação", em_breve),
-            _acao(ft.Icons.EVENT_AVAILABLE_OUTLINED, "Reservar", em_breve),
+            _acao(ft.Icons.HOW_TO_VOTE_OUTLINED, "Votação", ir_origem_home("/votacao")),
+            _acao(ft.Icons.EVENT_AVAILABLE_OUTLINED, "Reservar", ir_origem_home("/reservas")),
         ],
         spacing=10,
     )

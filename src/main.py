@@ -1,16 +1,34 @@
 import flet as ft
 
 import theme
+from views.bills import bills_view
 from views.create_house import create_house_view
+from views.home import home_view
 from views.join_house import join_house_view
 from views.login import login_view
+from views.mais import mais_view
+from views.new_bill import new_bill_view
 from views.options import options_view
+from views.pix import pix_view
+from views.placeholder import placeholder_view
+from views.reservas import reservas_view
+from views.reuniao import reuniao_view
+from views.voting import voting_view
 
 ROUTES = {
     "/": login_view,
     "/opcoes": options_view,
     "/criar-casa": create_house_view,
     "/entrar-casa": join_house_view,
+    "/inicio": home_view,
+    "/contas": bills_view,
+    "/nova-conta": new_bill_view,
+    "/pix": pix_view,
+    "/tarefas": lambda page: placeholder_view(page, "/tarefas", "Tarefas"),
+    "/mais": mais_view,
+    "/votacao": voting_view,
+    "/reservas": reservas_view,
+    "/reuniao": reuniao_view,
 }
 
 PARENT = {
@@ -23,6 +41,7 @@ def main(page: ft.Page):
     page.title = "We House"
     page.bgcolor = theme.BG
     page.padding = 0
+    page.data = {}  # estado compartilhado entre telas (ex.: conta escolhida, tela de origem)
 
     page.window.width = 390
     page.window.height = 844
@@ -38,7 +57,7 @@ def main(page: ft.Page):
         page.update()
 
     async def view_pop(e: ft.ViewPopEvent):
-        pai = PARENT.get(page.route)
+        pai = PARENT.get(page.route) or page.data.get("origem")
         await page.push_route(pai or "/")
 
     page.on_route_change = route_change
