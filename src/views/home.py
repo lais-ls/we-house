@@ -107,12 +107,13 @@ def home_view(page: ft.Page) -> ft.View:
         abrir_convite(page, db.CASA.nome, db.CASA.codigo)
 
     def atualizar_sino():
-            n = db.total_nao_lidas()
-            sino.badge = ft.Badge(label=str(n), bgcolor=theme.ACCENT, text_color=ft.Colors.WHITE) if n else None
+        n = db.total_nao_lidas()
+        selo.visible = n > 0
+        selo_texto.value = str(n)
     
     def abrir_sino(e):
         fechar = page.data.get("fechar_notificacoes")
-        if fechar:  # já aberto: tocar no sino de novo fecha
+        if fechar:
             fechar()
         else:
             abrir_notificacoes(page, ao_mudar=atualizar_sino)
@@ -128,12 +129,21 @@ def home_view(page: ft.Page) -> ft.View:
     total_mes = sum(v.valor for v in db.VENCIMENTOS) + 15.0
 
     sino = ft.IconButton(ft.Icons.NOTIFICATIONS_NONE, icon_size=22, icon_color=theme.TEXT, on_click=abrir_sino)
+    selo_texto = ft.Text("", size=9, weight=ft.FontWeight.W_700, color=ft.Colors.WHITE)
+    selo = ft.Container(
+        content=selo_texto,
+        width=16, height=16, border_radius=8, bgcolor=theme.ACCENT,
+        alignment=ft.Alignment.CENTER,
+        right=6, top=6,
+        ignore_interactions=True,
+    )
+    sino_com_selo = ft.Stack([sino, selo], width=48, height=48)
     atualizar_sino()
 
     topo = ft.Row(
         [
             ft.Row([logo(28), ft.Text("WeHouse", size=15, weight=ft.FontWeight.W_700, color=theme.TEXT)], spacing=8),
-            sino,
+            sino_com_selo,
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
     )

@@ -46,7 +46,7 @@ def main(page: ft.Page):
     page.data = {} 
 
     page.window.width = 390
-    page.window.height = 844
+    page.window.height = 700
 
     def route_change(e: ft.RouteChangeEvent):
         route = e.route if e.route in ROUTES else "/"
