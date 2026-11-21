@@ -23,8 +23,10 @@ DIVIDAS: list[Divida] = [
 ]
 
 TAREFAS: list[Tarefa] = [
-    Tarefa(1, "Limpar a cozinha", "Hoje", EU.id),
-    Tarefa(2, "Comprar papel higiênico", "Amanhã", MARINA.id),
+    Tarefa(1, "Tirar o lixo", "Hoje · 18h", LUCAS.id),
+    Tarefa(2, "Limpar a cozinha", "Hoje · 19h", EU.id),
+    Tarefa(3, "Lavar louça", "Hoje · 20h", ANA.id),
+    Tarefa(4, "Limpar banheiro", "Amanhã · 10h", MARINA.id),
 ]
 
 VENCIMENTOS: list[Vencimento] = [
@@ -70,9 +72,6 @@ def get_divida(divida_id: int) -> Divida | None:
     return next((d for d in DIVIDAS if d.id == divida_id), None)
 
 
-# ---------------------------------------------------------------------------
-# Votações
-# ---------------------------------------------------------------------------
 VOTACOES: list[Votacao] = [
     Votacao(1, "Comprar geladeira nova", 2400.00, LUCAS.id, date.today() + timedelta(days=3),
             {LUCAS.id: True, ANA.id: True, MARINA.id: True}),
@@ -113,10 +112,6 @@ def adicionar_votacao(titulo: str, valor: float, dias: int):
     VOTACOES.append(Votacao(prox, titulo, valor, EU.id, date.today() + timedelta(days=dias),
                             {EU.id: True}))  # quem propõe já concorda
 
-
-# ---------------------------------------------------------------------------
-# Reservas (slots de 2h: 8h, 10h, ... 20h)
-# ---------------------------------------------------------------------------
 RECURSOS = ["Máquina de lavar", "Sala de visitas", "Churrasqueira"]
 HORARIOS = [8, 10, 12, 14, 16, 18, 20]
 
@@ -126,7 +121,6 @@ def segunda_da_semana(d: date) -> date:
 
 
 def _semear_reservas() -> list[Reserva]:
-    # (dia da semana 0=seg, hora, morador) repetido nas semanas próximas
     padrao = {
         "Máquina de lavar": [(2, 8, ANA), (5, 8, LUCAS), (0, 10, ANA), (3, 10, LUCAS), (6, 10, EU),
                              (1, 12, MARINA), (5, 12, ANA), (4, 14, ANA), (0, 16, LUCAS), (3, 16, MARINA),
@@ -162,10 +156,6 @@ def cancelar_reserva(recurso: str, dia: date, hora: int, morador_id: int):
     if r and r.morador_id == morador_id:
         RESERVAS.remove(r)
 
-
-# ---------------------------------------------------------------------------
-# Reunião mensal
-# ---------------------------------------------------------------------------
 def _proximo_sabado() -> datetime:
     d = date.today() + timedelta(days=7)
     d += timedelta(days=(5 - d.weekday()) % 7)
@@ -182,7 +172,6 @@ REUNIAO = Reuniao(
     ],
 )
 
-# Atas de reuniões anteriores: (data, tema, anotações, combinados)
 HISTORICO_REUNIOES: list[tuple[datetime, str, str, list[Combinado]]] = [
     (datetime.now().replace(hour=19, minute=0) - timedelta(days=30), "Divisão da limpeza",
      "Ficou decidido revezar a limpeza das áreas comuns.",
@@ -197,7 +186,7 @@ def confirmar_presenca(morador_id: int):
 
 def propor_nova_data(nova: datetime, morador_id: int):
     REUNIAO.data = nova
-    REUNIAO.confirmados = {morador_id}  # quem propôs já confirma; os outros precisam reconfirmar
+    REUNIAO.confirmados = {morador_id}
     REUNIAO.confirmada = False
 
 
@@ -211,3 +200,17 @@ def salvar_ata(anotacoes: str):
     REUNIAO.confirmados = set()
     REUNIAO.confirmada = False
     REUNIAO.data = REUNIAO.data + timedelta(days=28)
+
+def tarefas(feitas: bool) -> list[Tarefa]:
+    return [t for t in TAREFAS if t.feita == feitas]
+
+
+def alternar_tarefa(tarefa_id: int, feita: bool):
+    for t in TAREFAS:
+        if t.id == tarefa_id:
+            t.feita = feita
+
+
+def adicionar_tarefa(titulo: str, responsavel_id: int, quando: str):
+    prox = max((t.id for t in TAREFAS), default=0) + 1
+    TAREFAS.append(Tarefa(prox, titulo, quando, responsavel_id))

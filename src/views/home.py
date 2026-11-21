@@ -110,7 +110,7 @@ def home_view(page: ft.Page) -> ft.View:
     recebo = db.total_pendente(db.dividas_que_me_devem())
     n_devo = len([d for d in db.dividas_que_eu_devo() if not d.pago])
     n_recebo = len([d for d in db.dividas_que_me_devem() if not d.pago])
-    total_mes = sum(v.valor for v in db.VENCIMENTOS) + 15.0  # exemplo: parte da pessoa no mês
+    total_mes = sum(v.valor for v in db.VENCIMENTOS) + 15.0 
 
     topo = ft.Row(
         [
@@ -162,7 +162,7 @@ def home_view(page: ft.Page) -> ft.View:
     )
 
     tarefas = card(
-        ft.Column([_linha_tarefa(t) for t in db.TAREFAS], spacing=6),
+        ft.Column([_linha_tarefa(t) for t in db.tarefas(False)[:3]], spacing=6),
         padding=12,
         radius=16,
     )

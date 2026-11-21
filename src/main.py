@@ -10,9 +10,9 @@ from views.mais import mais_view
 from views.new_bill import new_bill_view
 from views.options import options_view
 from views.pix import pix_view
-from views.placeholder import placeholder_view
 from views.reservas import reservas_view
 from views.reuniao import reuniao_view
+from views.tarefas import tarefas_view
 from views.voting import voting_view
 
 ROUTES = {
@@ -24,7 +24,7 @@ ROUTES = {
     "/contas": bills_view,
     "/nova-conta": new_bill_view,
     "/pix": pix_view,
-    "/tarefas": lambda page: placeholder_view(page, "/tarefas", "Tarefas"),
+    "/tarefas": tarefas_view,
     "/mais": mais_view,
     "/votacao": voting_view,
     "/reservas": reservas_view,
@@ -41,7 +41,7 @@ def main(page: ft.Page):
     page.title = "We House"
     page.bgcolor = theme.BG
     page.padding = 0
-    page.data = {}  # estado compartilhado entre telas (ex.: conta escolhida, tela de origem)
+    page.data = {} 
 
     page.window.width = 390
     page.window.height = 844
