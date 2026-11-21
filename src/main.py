@@ -14,6 +14,7 @@ from views.reservas import reservas_view
 from views.reuniao import reuniao_view
 from views.tarefas import tarefas_view
 from views.voting import voting_view
+from views.compras import compras_view
 
 ROUTES = {
     "/": login_view,
@@ -29,6 +30,7 @@ ROUTES = {
     "/votacao": voting_view,
     "/reservas": reservas_view,
     "/reuniao": reuniao_view,
+    "/compras": compras_view,
 }
 
 PARENT = {

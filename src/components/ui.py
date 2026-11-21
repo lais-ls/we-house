@@ -308,10 +308,6 @@ def abrir_menu_mais(page: ft.Page, nav: ft.NavigationBar, selected: int):
             await page.push_route(rota)
         return handler
 
-    def em_breve(e):
-        fechar()
-        show_message(page, "Lista de compras em breve")
-
     def item(icone, texto, on_click) -> ft.Container:
         return ft.Container(
             on_click=on_click,
@@ -331,7 +327,7 @@ def abrir_menu_mais(page: ft.Page, nav: ft.NavigationBar, selected: int):
 
     menu = ft.Column(
         [
-            item(ft.Icons.SHOPPING_BAG_OUTLINED, "Lista de Compras", em_breve),
+            item(ft.Icons.SHOPPING_BAG_OUTLINED, "Lista de Compras", ir("/compras")),
             item(ft.Icons.EVENT_AVAILABLE_OUTLINED, "Reservar", ir("/reservas")),
             item(ft.Icons.HOW_TO_VOTE_OUTLINED, "Votações", ir("/votacao")),
             item(ft.Icons.GROUPS_OUTLINED, "Reuniões", ir("/reuniao")),

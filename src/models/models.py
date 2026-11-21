@@ -87,3 +87,11 @@ class Reuniao:
     tema: str = ""
     anotacoes: str = ""
     combinados: list[Combinado] = field(default_factory=list)
+
+@dataclass
+class ItemCompra:
+    id: int
+    nome: str
+    quantidade: str
+    adicionado_por_id: int
+    comprado: bool = False

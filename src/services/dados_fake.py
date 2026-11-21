@@ -3,7 +3,7 @@
 from datetime import date, datetime, timedelta
 
 from models.models import (
-    Casa, Combinado, Divida, Morador, Reserva, Reuniao, Tarefa, Vencimento, Votacao,
+    Casa, Combinado, Divida, Morador, Reserva, Reuniao, Tarefa, Vencimento, Votacao, ItemCompra,
 )
 
 EU = Morador(1, "Bia", "#F7C2B2")
@@ -216,3 +216,26 @@ def alternar_tarefa(tarefa_id: int, feita: bool):
 def adicionar_tarefa(titulo: str, responsavel_id: int, quando: str):
     prox = max((t.id for t in TAREFAS), default=0) + 1
     TAREFAS.append(Tarefa(prox, titulo, quando, responsavel_id))
+
+ITENS_COMPRA: list[ItemCompra] = [
+    ItemCompra(1, "Arroz", "2kg", LUCAS.id),
+    ItemCompra(2, "Papel higiênico", "12un", MARINA.id),
+    ItemCompra(3, "Detergente", "", EU.id),
+    ItemCompra(4, "Sabão em pó", "1kg", ANA.id, True),
+    ItemCompra(5, "Café", "500g", LUCAS.id, True),
+]
+
+
+def itens_compra(comprado: bool) -> list[ItemCompra]:
+    return [i for i in ITENS_COMPRA if i.comprado == comprado]
+
+
+def alternar_item(item_id: int, comprado: bool):
+    for i in ITENS_COMPRA:
+        if i.id == item_id:
+            i.comprado = comprado
+
+
+def adicionar_item(nome: str, quantidade: str, morador_id: int):
+    prox = max((i.id for i in ITENS_COMPRA), default=0) + 1
+    ITENS_COMPRA.append(ItemCompra(prox, nome, quantidade, morador_id))
