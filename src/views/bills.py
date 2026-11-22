@@ -3,6 +3,7 @@ import flet as ft
 import theme
 from components.ui import avatar, bottom_nav, brl, card, small_button, show_message
 from services import dados_fake as db
+from components.ui import avatar, bottom_nav, brl, card, pill, small_button, show_message
 
 
 def bills_view(page: ft.Page) -> ft.View:
@@ -24,6 +25,20 @@ def bills_view(page: ft.Page) -> ft.View:
         def handler(e):
             db.marcar_paga(divida_id)  # TODO: confirmar recebimento no banco
             show_message(page, "Marcado como recebido")
+            atualizar()
+        return handler
+
+    def confirmar(divida_id: int):
+        def handler(e):
+            db.confirmar_recebimento(divida_id)
+            show_message(page, "Recebimento confirmado!")
+            atualizar()
+        return handler
+
+    def nao_recebi(divida_id: int):
+        def handler(e):
+            db.recusar_pagamento(divida_id)
+            show_message(page, "Ok, a conta voltou para pendente")
             atualizar()
         return handler
 
@@ -49,6 +64,19 @@ def bills_view(page: ft.Page) -> ft.View:
             ),
         )
 
+    def acoes(d, eu_devo: bool) -> list[ft.Control]:
+        if eu_devo:
+            if d.aguardando:
+                return [pill("Aguardando", "#B5651D", "#FCEBD3", size=10)]
+            return [small_button("Pagar", pagar(d.id))]
+        if d.aguardando:
+            return [
+                small_button("Confirmar", confirmar(d.id)),
+                ft.TextButton(content=ft.Text("Não recebi", size=10, color=theme.MUTED), on_click=nao_recebi(d.id),
+                              style=ft.ButtonStyle(padding=ft.Padding.all(0))),
+            ]
+        return [small_button("Recebido", receber(d.id))]
+
     def linha(d) -> ft.Container:
         eu_devo = estado["aba"] == "devo"
         outro = db.morador_por_id(d.credor_id if eu_devo else d.devedor_id)
@@ -73,7 +101,7 @@ def bills_view(page: ft.Page) -> ft.View:
                     ft.Column(
                         [
                             ft.Text(brl(d.valor), size=13, weight=ft.FontWeight.W_700, color=theme.TEXT),
-                            small_button("Pagar", pagar(d.id)) if eu_devo else small_button("Recebido", receber(d.id)),
+                            *acoes(d, eu_devo),
                         ],
                         horizontal_alignment=ft.CrossAxisAlignment.END,
                         spacing=6,

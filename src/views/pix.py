@@ -56,9 +56,8 @@ def pix_view(page: ft.Page) -> ft.View:
         show_message(page, "Código Pix copiado!")
 
     async def ja_paguei(e):
-        # TODO: no futuro, o credor confirma o recebimento
-        db.marcar_paga(divida.id)
-        show_message(page, "Pagamento registrado!")
+        db.informar_pagamento(divida.id)
+        show_message(page, f"Aviso enviado! {credor.nome} vai confirmar o recebimento")
         await page.push_route("/contas")
 
     qr = card(
@@ -122,7 +121,7 @@ def pix_view(page: ft.Page) -> ft.View:
     rodape = ft.Column(
         [
             primary_button("Já paguei", ja_paguei),
-            ft.Text("Depois de pagar, toque para confirmar", size=10, color=theme.MUTED,
+            ft.Text(f"Depois de pagar, toque para avisar {credor.nome}", size=10, color=theme.MUTED,
                     text_align=ft.TextAlign.CENTER),
             ft.Container(height=4),
         ],

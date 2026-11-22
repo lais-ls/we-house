@@ -25,6 +25,7 @@ class Divida:
     devedor_id: int
     vencimento: str = ""
     pago: bool = False
+    aguardando: bool = False
 
 
 @dataclass

@@ -20,7 +20,7 @@ DIVIDAS: list[Divida] = [
     Divida(2, "Internet", 35.00, MARINA.id, EU.id, "Vence em 5 dias"),
     Divida(3, "Produtos de limpeza", 22.50, LUCAS.id, EU.id, "Vence em 9 dias"),
     # me devem
-    Divida(4, "Compras do mercado", 40.00, EU.id, ANA.id, "Vence amanhã"),
+        Divida(4, "Compras do mercado", 40.00, EU.id, ANA.id, "Vence amanhã", aguardando=True),
 ]
 
 TAREFAS: list[Tarefa] = [
@@ -67,6 +67,23 @@ def marcar_paga(divida_id: int):
     for d in DIVIDAS:
         if d.id == divida_id:
             d.pago = True
+            d.aguardando = False
+
+
+def informar_pagamento(divida_id: int):
+    d = get_divida(divida_id)
+    if d and not d.pago:
+        d.aguardando = True
+
+
+def confirmar_recebimento(divida_id: int):
+    marcar_paga(divida_id)
+
+
+def recusar_pagamento(divida_id: int):
+    d = get_divida(divida_id)
+    if d:
+        d.aguardando = False
 
 
 def get_divida(divida_id: int) -> Divida | None:
@@ -257,7 +274,7 @@ LIDAS: set[str] = set()
 def notificacoes() -> list[Notificacao]:
     itens: list[Notificacao] = []
     for d in dividas_que_eu_devo():
-        if not d.pago:
+        if not d.pago and not d.aguardando:
             credor = morador_por_id(d.credor_id).nome
             itens.append(Notificacao(f"conta-{d.id}", "conta", f"Pagar {credor}: {d.descricao}",
                                      f"R$ {d.valor:.2f}".replace(".", ",") + (f" · {d.vencimento}" if d.vencimento else ""),
@@ -277,8 +294,13 @@ def notificacoes() -> list[Notificacao]:
     for d in dividas_que_me_devem():
         if not d.pago:
             devedor = morador_por_id(d.devedor_id).nome
-            itens.append(Notificacao(f"receber-{d.id}", "receber", f"{devedor} ainda te deve",
-                                     f"R$ {d.valor:.2f}".replace(".", ",") + f" · {d.descricao}", "/contas"))
+            valor = f"R$ {d.valor:.2f}".replace(".", ",")
+            if d.aguardando:
+                itens.append(Notificacao(f"receber-{d.id}", "receber", f"{devedor} diz que pagou",
+                                         f"{valor} · toque para confirmar o recebimento", "/contas"))
+            else:
+                itens.append(Notificacao(f"receber-{d.id}", "receber", f"{devedor} ainda te deve",
+                                         f"{valor} · {d.descricao}", "/contas"))
     for n in itens:
         n.lida = n.chave in LIDAS
     return itens
