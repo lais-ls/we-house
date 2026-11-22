@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WeHouse</title>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: #E9E4D8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .celular {
+      width: 390px;
+      height: min(780px, calc(100vh - 32px));
+      border-radius: 28px;
+      overflow: hidden;
+      background: #F6F3ED;
+      box-shadow: 0 20px 60px rgba(43, 45, 58, 0.25), 0 0 0 8px #2B2D3A;
+    }
+    .celular iframe { width: 100%; height: 100%; border: 0; display: block; }
+    @media (max-width: 500px) {
+      .celular { width: 100vw; height: 100vh; border-radius: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="celular">
+    <iframe src="app/index.html" title="WeHouse"></iframe>
+  </div>
+</body>
+</html>
