@@ -53,6 +53,8 @@ def app_field(hint: str, icon=None, password: bool = False, **kwargs) -> ft.Text
         can_reveal_password=password,
         filled=True,
         fill_color=theme.FIELD_BG,
+        color=theme.TEXT,
+        cursor_color=theme.PRIMARY,
         border_radius=10,
         border_color=theme.BORDER,
         focused_border_color=theme.PRIMARY,

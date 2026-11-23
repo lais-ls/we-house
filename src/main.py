@@ -41,6 +41,8 @@ PARENT = {
 
 def main(page: ft.Page):
     page.title = "We House"
+    page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme = ft.Theme(color_scheme_seed=theme.PRIMARY)
     page.bgcolor = theme.BG
     page.padding = 0
     page.data = {} 
